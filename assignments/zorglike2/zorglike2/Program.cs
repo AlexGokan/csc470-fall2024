@@ -12,7 +12,7 @@ public class Room
     public Room to_north;
     public Room to_south;
 
-    public bool already_entered;
+    public bool item_already_taken_from_room;
 
     public Collectible grabbable;
 
@@ -25,7 +25,7 @@ public class Room
         to_west = null;
         to_south = null;
 
-        already_entered = false;
+        item_already_taken_from_room = false;
 
         grabbable = null;
     }
@@ -35,9 +35,9 @@ public class Room
         return room_name + ": " + description;
     }
 
-    public void upon_entry(Character me)
+    public void take_item_from_room(Character me)
     {
-        if (!already_entered)
+        if (!item_already_taken_from_room)
         {
             if (grabbable != null)
             {
@@ -48,7 +48,7 @@ public class Room
 
 
 
-        already_entered = true;
+        item_already_taken_from_room = true;
     }
 
     public string surroundings()
@@ -177,7 +177,12 @@ public class Program
 
             Console.WriteLine("----------------------");
             Console.WriteLine("You are at: " + me.location.to_string());
-            me.location.upon_entry(me);
+
+
+            if (!me.location.item_already_taken_from_room && me.location.grabbable != null)
+            {
+                Console.WriteLine("On the ground is an item you can take");
+            }
 
             Console.WriteLine(me.location.surroundings());
 
@@ -237,9 +242,14 @@ public class Program
             }
             if (userinput == "-h")
             {
-                Console.WriteLine("[i - inventory]");
-                Console.WriteLine("go [north/south/east/west - go that direction]");
+                Console.WriteLine("\"i\" - inventory");
+                Console.WriteLine("\"take\" - grab an item from your current location");
+                Console.WriteLine("\"go [north/south/east/west]\" - go that direction");
 
+            }
+            if(userinput == "take")
+            {
+                me.location.take_item_from_room(me);
             }
             if (userinput == "go north")
             {
