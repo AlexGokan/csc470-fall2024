@@ -15,6 +15,7 @@ public class sphere_contact_script : MonoBehaviour
     void Start()
     {
         Debug.Log("Score: "+score);   
+        score_text.text = "Gold nuggets absorbed: "+score;
     }
 
     // Update is called once per frame
@@ -30,7 +31,7 @@ public class sphere_contact_script : MonoBehaviour
 
         Destroy(other.gameObject);
 
-        score_text.text = "Score: "+score;//modify the score text objects string value
+        score_text.text = "Gold nuggets absorbed: "+score;//modify the score text objects string value
     }
 
     public void OnCollisionEnter(Collision col){
