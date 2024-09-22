@@ -400,7 +400,7 @@ GameObject:
   - component: {fileID: 260067082}
   - component: {fileID: 260067081}
   m_Layer: 5
-  m_Name: Text (TMP)
+  m_Name: Text (TMP) instructions
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -454,8 +454,14 @@ MonoBehaviour:
     Airbrake with
     shift
 
+    Afterburners with space
 
-    Get 6 balloons before time runs out!'
+
+    Get 6 balloons before time runs out!
+
+
+    Hit
+    backspace to remove time from the timer'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -616,8 +622,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 36
-  m_fontSizeBase: 36
+  m_fontSize: 50
+  m_fontSizeBase: 50
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -1080,11 +1086,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: aba30aa8d0922e944b243a76b4aeebea, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 1.62
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: aba30aa8d0922e944b243a76b4aeebea, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: 1.58
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: aba30aa8d0922e944b243a76b4aeebea, type: 3}
       propertyPath: m_LocalRotation.w
@@ -1114,6 +1120,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: aba30aa8d0922e944b243a76b4aeebea, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: d6c015457c62dd44fa05148da3716156, type: 2}
     - target: {fileID: 919132149155446097, guid: aba30aa8d0922e944b243a76b4aeebea, type: 3}
       propertyPath: m_Name
       value: explosion
@@ -1644,6 +1654,8 @@ MonoBehaviour:
   ground: {fileID: 289338740}
   score_display: {fileID: 264245363}
   gameover_display: {fileID: 1760264470}
+  instructions: {fileID: 260067081}
+  explosion: {fileID: 1323872090}
 --- !u!1 &1199203257
 GameObject:
   m_ObjectHideFlags: 0
@@ -1749,6 +1761,11 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1199203257}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &1323872090 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: aba30aa8d0922e944b243a76b4aeebea, type: 3}
+  m_PrefabInstance: {fileID: 886563253}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1430699837
 GameObject:
   m_ObjectHideFlags: 0

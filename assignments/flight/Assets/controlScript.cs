@@ -13,13 +13,15 @@ public class controlScript : MonoBehaviour
     public TMP_Text score_display;
     public TMP_Text gameover_display;
 
+    public TMP_Text instructions;
+
     public GameObject explosion;
 
     float prevtime;
     float forward_speed = 0.5f;
     float rot_speed = 15.0f;
 
-    float time_left = 5;
+    float time_left = 180;
     int score_needed = 6;
 
     Quaternion starting_rot;
@@ -59,6 +61,7 @@ public class controlScript : MonoBehaviour
     if(time_left < 0 && score < score_needed){
         game_is_over = true;
         gameover_display.text = "GAME OVER!!!";
+        instructions.text = "";
 
         explosion.transform.localScale = new Vector3(1f,1f,1f) * 400.0f;
     }
@@ -72,6 +75,8 @@ public class controlScript : MonoBehaviour
     }
     else if(Input.GetKey(KeyCode.LeftShift)){
         forward_speed = 2.0f;
+    }else if(Input.GetKey(KeyCode.Space)){
+        forward_speed = 40f;
     }
     else{
         forward_speed = 10f;
@@ -82,6 +87,10 @@ public class controlScript : MonoBehaviour
     }
     if(Input.GetKey(KeyCode.E)){
         roll_right = true;
+    }
+
+    if(Input.GetKeyDown(KeyCode.Backspace)){
+        time_left -= 30.0f;
     }
 
     float h_axis = Input.GetAxis("Horizontal");
