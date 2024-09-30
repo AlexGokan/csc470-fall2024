@@ -95,7 +95,7 @@ GameObject:
   - component: {fileID: 4216078864071282513}
   - component: {fileID: 1365998149451463629}
   m_Layer: 0
-  m_Name: edge_cell
+  m_Name: main_cell
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -133,8 +133,8 @@ MonoBehaviour:
   alive: 1
   xi: -1
   yi: -1
-  alive_color: {r: 0.028835872, g: 0.6792453, b: 0.6157652, a: 0}
-  dead_color: {r: 0, g: 0, b: 0, a: 0}
+  alive_color: {r: 0.6784314, g: 0.41371292, b: 0.027450986, a: 0}
+  dead_color: {r: 0.124902256, g: 0.106664255, b: 0.2679245, a: 0}
 --- !u!65 &1365998149451463629
 BoxCollider:
   m_ObjectHideFlags: 0

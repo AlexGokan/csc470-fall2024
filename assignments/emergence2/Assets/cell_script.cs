@@ -14,6 +14,8 @@ public class cell_script : MonoBehaviour
 	
 	public Color alive_color;
 	public Color dead_color;
+
+	public bool is_edge = true;
 	
 	private Vector3 pos;
 	
@@ -38,12 +40,14 @@ public class cell_script : MonoBehaviour
 		if(Input.GetKeyDown("space")){
 			alive = !alive;
 		}
-		
+
 		set_color();
     }
 	
 	void OnMouseDown(){
-		alive = !alive;
+		if(is_edge){
+			alive = !alive;
+		}
 	}
 	
 }
