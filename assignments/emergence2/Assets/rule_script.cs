@@ -8,6 +8,7 @@ public class rule_script : MonoBehaviour
     public int responds_to;
     public bool result;
 
+
     public Renderer c1_renderer;
     public Renderer c2_renderer;
     public Renderer c4_renderer;
@@ -20,9 +21,6 @@ public class rule_script : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-
-        
-
         update_colors();
 
     }
@@ -59,13 +57,13 @@ public class rule_script : MonoBehaviour
 
     }
 
-    void update_output(){
+    public void swap_output(){
         result = !result;
         update_colors();
     }
 
     void OnMouseDown(){
-        update_output();
+        swap_output();
     }
 
     

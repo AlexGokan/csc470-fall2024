@@ -16,18 +16,7 @@ This script will hold the stuff for clickable buttons that will modify the edges
 
     void Start()
     {
-        //instantiate a left-side clickable button
-        GameObject left_button = Instantiate(button_prefab,new Vector3(-10f,20f,0f),Quaternion.identity);
-        left_button.GetComponent<button_script>().list_len = game_manager.GetComponent<game_managment>().grid_height;
-
-        GameObject right_button = Instantiate(button_prefab,new Vector3(-6f,20f,0f),Quaternion.identity);
-        right_button.GetComponent<button_script>().list_len = game_manager.GetComponent<game_managment>().grid_height;
-
-        GameObject top_button = Instantiate(button_prefab,new Vector3(-8f,28f,0f),Quaternion.identity);
-        top_button.transform.Rotate(0f,0f,90f);//make it horizontal
-        top_button.GetComponent<button_script>().list_len = game_manager.GetComponent<game_managment>().grid_width;
-
-
+    
     }
 
     void set_edge_randomly(){
@@ -64,10 +53,10 @@ This script will hold the stuff for clickable buttons that will modify the edges
     void Update()
     {
         
-        if(Input.GetKeyDown(KeyCode.Q)){
+        if(Input.GetKeyDown(KeyCode.K)){
             set_edge_randomly();
         }
-        if(Input.GetKeyDown(KeyCode.W)){
+        if(Input.GetKeyDown(KeyCode.L)){
             set_edge_blank();
         }
         
