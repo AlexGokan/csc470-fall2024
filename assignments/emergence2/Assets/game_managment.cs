@@ -23,6 +23,35 @@ public class game_managment : MonoBehaviour
 
 	public Camera cam;
 
+	void update_board(){//update the body cells based on the CA rules
+		for(int y=grid_height-2; y>=0; y--){//-2 to skip the first row
+			for(int x=1; x<grid_width-1; x++){
+				int v = 0;
+				v += 1*bool_to_int(grid[y+1,x+1].alive);
+				v += 2*bool_to_int(grid[y+1,x].alive);
+				v += 4*bool_to_int(grid[y+1,x-1].alive);
+
+				//get the v-th rule
+				bool change_to = rule_objects[v].GetComponent<rule_script>().result;
+
+				grid[y,x].alive = change_to;
+				
+				if(grid[y,x].alive){
+					GameObject p = grid[y,x].parent_object;
+					p.transform.localScale = new Vector3(1f,5f,1f);
+					p.GetComponent<BoxCollider>().transform.localScale = new Vector3(1f,5f,1f);
+				}else{
+					GameObject p = grid[y,x].parent_object;
+					p.transform.localScale = new Vector3(1f,1f,1f);
+					p.GetComponent<BoxCollider>().transform.localScale = new Vector3(1f,1f,1f);
+				}
+				
+
+			}
+		}
+
+	}
+
     void Start()
     {
 
@@ -96,45 +125,24 @@ public class game_managment : MonoBehaviour
 			}
 		}		
 	 
+
+		update_board();
+
     }
 
 	int bool_to_int(bool b){
 		return b?1:0; 
 	}
 
-	void update_board(){//update the body cells based on the CA rules
-		for(int y=grid_height-2; y>=0; y--){//-2 to skip the first row
-			for(int x=1; x<grid_width-1; x++){
-				int v = 0;
-				v += 1*bool_to_int(grid[y+1,x+1].alive);
-				v += 2*bool_to_int(grid[y+1,x].alive);
-				v += 4*bool_to_int(grid[y+1,x-1].alive);
 
-				//get the v-th rule
-				bool change_to = rule_objects[v].GetComponent<rule_script>().result;
-
-				grid[y,x].alive = change_to;
-				
-				if(grid[y,x].alive){
-					GameObject p = grid[y,x].parent_object;
-					p.transform.localScale = new Vector3(1f,5f,1f);
-					p.GetComponent<BoxCollider>().transform.localScale = new Vector3(1f,5f,1f);
-				}else{
-					GameObject p = grid[y,x].parent_object;
-					p.transform.localScale = new Vector3(1f,1f,1f);
-					p.GetComponent<BoxCollider>().transform.localScale = new Vector3(1f,1f,1f);
-				}
-				
-
-			}
-		}
-
-	}
 
     void Update()
     {
         if(Input.GetKeyDown(KeyCode.P)){
 			update_board();
+
+			GameObject roller = GameObject.Find("rollerBall");
+			roller.transform.Translate(new Vector3(0f,0.001f,0f));//jog the balls position to reset the physics
 		}
 
 		float movespeed = 0.07f;
