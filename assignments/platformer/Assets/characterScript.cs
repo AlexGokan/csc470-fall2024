@@ -24,26 +24,47 @@ public class characterScript : MonoBehaviour
     bool dirt_visible = false;
     GameObject dirt_instance = null;
 
+    public float dash_cooldown_max = 0.1f;
+
+    public float dash_cooldown;
+
 
     // Start is called before the first frame update
     void Start()
     {
         dash_amount = 0.0f;
         speed_up = 0.0f;
+        dash_cooldown = 0.0f;
+
+        dash_cooldown_max = 0.7f;
     }
 
-    // Update is called once per frame
+    void reset_player(){
+        cc.enabled = false;
+        transform.position = new Vector3(-0.1f,0f,0f);
+        cc.enabled = true;
+    }
+
+
     void Update()
     {
-        float haxis = Input.GetAxis("Horizontal");
-        float vaxis = Input.GetAxis("Vertical");
+        dash_amount *= 0.90f;
+        dash_cooldown -= Time.deltaTime;
+
+
+        float haxis = Input.GetAxisRaw("Horizontal");//"raw" version has no ramp up/down
+        float vaxis = Input.GetAxisRaw("Vertical");
 
 
         if(cc.isGrounded){
             num_jumps = 2;
             speed_up = -1f;//force it to check the ground
         }else{
-            speed_up = speed_up - gravity * Time.deltaTime;
+            speed_up = speed_up - (gravity * Time.deltaTime);
+        }
+
+        if(Input.GetKeyDown(KeyCode.P)){
+            reset_player();
         }
 
         
@@ -53,14 +74,14 @@ public class characterScript : MonoBehaviour
         }
         
 
-
-
-        if(Input.GetKeyDown(KeyCode.LeftShift)){
+        if(Input.GetKeyDown(KeyCode.LeftShift) && (dash_cooldown < 0.0f)){
             dash_amount = dash_mult;
+            dash_cooldown = dash_cooldown_max;
         }
         float dash_speed_mult = 1.0f + dash_amount;
-        dash_amount *= 0.95f;
+        
 
+        
         float speed_forward = vaxis * Time.deltaTime * base_speed * -1 * dash_speed_mult;
         float speed_side = haxis * Time.deltaTime * base_speed * dash_speed_mult;
 
@@ -80,11 +101,11 @@ public class characterScript : MonoBehaviour
         double h_speed = horizontal_move.magnitude;
         
 
-        if((h_speed > 0.5) && (!dirt_visible)){
+        if((dash_amount > dash_mult * 0.5f) && (!dirt_visible)){
             dirt_visible = true;
             dirt_instance = Instantiate<GameObject>(dirt_trail);
         }
-        if(h_speed < 0.1){
+        if(dash_amount < dash_mult * 0.05){
             dirt_visible = false;
             Destroy(dirt_instance);
         }
@@ -96,13 +117,20 @@ public class characterScript : MonoBehaviour
 
             dirt_instance.transform.rotation = Quaternion.Euler(0f,dirt_angle,0f);
 
-            Debug.Log(dirt_angle);
 
         }
 
         
 
 
+
+    }
+
+    void OnControllerColliderHit(ControllerColliderHit other){
+        GameObject otro = other.collider.gameObject;
+        if(otro.CompareTag("death")){
+            reset_player();
+        }
 
     }
 }
