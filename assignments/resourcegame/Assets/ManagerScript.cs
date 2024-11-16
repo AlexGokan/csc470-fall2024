@@ -14,9 +14,9 @@ public class ManagerScript : MonoBehaviour
     public GameObject UnitPrefab;
 
     public GameObject GridSquarePrefab;
-    List<UnitScript> my_units = new List<UnitScript>();
+    public List<UnitScript> my_units = new List<UnitScript>();
 
-    List<UnitScript> enemy_units = new List<UnitScript>();
+    public List<UnitScript> enemy_units = new List<UnitScript>();
 
     UnitScript selected_unit;
 
@@ -35,6 +35,8 @@ public class ManagerScript : MonoBehaviour
     public Action<BoardSquareScript> square_clicked;
 
     GameObject[,] board = new GameObject[6,6];
+
+    public UnitScript[,] units_on_board = new UnitScript[6,6];
 
     void OnEnable(){
         if (ManagerScript.instance == null){
@@ -106,28 +108,35 @@ public class ManagerScript : MonoBehaviour
         for(int i=0; i<6; i++){
             GameObject u = Instantiate(UnitPrefab);
             UnitScript us = u.GetComponent<UnitScript>();
-            us.setup(10000,"userTeam",10,i,0,0.35f,true);
+            us.setup(3,"userTeam",10,i,0,0.35f,true);
             my_units.Add(us);
 
 
             GameObject u2 = Instantiate(UnitPrefab);
             UnitScript us2 = u2.GetComponent<UnitScript>();
-            us2.setup(10000,"userTeam",10,i,1,0.35f,true);
+            us2.setup(3,"userTeam",10,i,1,0.35f,true);
             my_units.Add(us2);
+
+            units_on_board[i,0] = us;
+            units_on_board[i,1] = us2;
+
 
         }
 
         for(int i=0; i<6; i++){
             GameObject u = Instantiate(UnitPrefab);
             UnitScript us = u.GetComponent<UnitScript>();
-            us.setup(10000,"userTeam",10,i,4,0.35f,false);
+            us.setup(3,"userTeam",3,i,4,0.35f,false);
             my_units.Add(us);
 
 
             GameObject u2 = Instantiate(UnitPrefab);
             UnitScript us2 = u2.GetComponent<UnitScript>();
-            us2.setup(10000,"userTeam",10,i,5,0.35f,false);
+            us2.setup(3,"userTeam",3,i,5,0.35f,false);
             my_units.Add(us2);
+
+            units_on_board[i,4] = us;
+            units_on_board[i,5] = us2;
 
         }
 

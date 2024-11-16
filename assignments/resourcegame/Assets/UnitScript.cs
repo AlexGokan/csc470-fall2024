@@ -78,25 +78,58 @@ public class UnitScript : MonoBehaviour
     }
     
     
+    bool valid_attack(int xf,int yf){
+        int xdiff = xcoord - xf;
+        int ydiff = ycoord - yf;
+
+        if(Mathf.Abs(xdiff) >= 2 || Math.Abs(ydiff) >= 2){
+            Debug.Log("attacking too far away");
+            return false;
+        }
+        
+        if(ManagerScript.instance.units_on_board[xf,yf] != null){
+            if(ManagerScript.instance.units_on_board[xf,yf].friendly == false){
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     bool valid_move(int xf, int yf){
         int xdiff = xcoord - xf;
         int ydiff = ycoord - yf;
 
         if(Mathf.Abs(xdiff) >= 2 || Math.Abs(ydiff) >= 2){
+            Debug.Log("moving too far away");
             return false;
         }
 
+        if(ManagerScript.instance.units_on_board[xf,yf] == null){
+            return true;
+        }
 
-        return true;
+
+
+        return false;
     }
 
     public bool move_to(int i, int j){
         Debug.Log("moving to"+i+" "+j);
-
         
+        if(valid_attack(i,j)){
+            attack(ManagerScript.instance.units_on_board[i,j], 1);
+            
+            Debug.Log("Valid attack");
+            return true;
+        }
+
         if(valid_move(i,j)){
+            Debug.Log("Valid move");
+            ManagerScript.instance.units_on_board[xcoord,ycoord] = null;
             xcoord = i; ycoord = j;
             transform.position = new Vector3(i,0,j);
+            ManagerScript.instance.units_on_board[i,j] = this;
             return true;
         }
         //if there is a teammate do nothing
@@ -109,7 +142,22 @@ public class UnitScript : MonoBehaviour
 
     
     public void attack(UnitScript other, int damage_amount){
-        other.change_health(-damage_amount);
+        if(this.level == other.level){
+            other.change_health(-damage_amount);
+            this.change_health(-damage_amount);
+            Debug.Log("both hurt");
+            return;
+        }
+        
+        if(this.level > other.level){
+            other.change_health(-damage_amount);
+            Debug.Log("you did damage");
+        }else{
+            this.change_health(-damage_amount);
+            Debug.Log("you took damage");
+        }
+        
+        
     }
     
     
@@ -133,12 +181,19 @@ public class UnitScript : MonoBehaviour
     
     public void killMe(){
         this.alive = false;
+        ManagerScript.instance.units_on_board[this.xcoord,this.ycoord] = null;
+        if(this.friendly){
+            ManagerScript.instance.my_units.Remove(this);
+        }else{
+            ManagerScript.instance.enemy_units.Remove(this);
+        }
         Destroy(this.gameObject);
     }
     
     
     void OnDestroy(){
         Debug.Log("Killed");
+        ManagerScript.instance.unit_clicked -= manager_says_unit_clicked;
     }
 
     public void select_me(){
