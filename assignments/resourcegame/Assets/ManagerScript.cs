@@ -1,7 +1,4 @@
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using Unity.VisualScripting;
 using UnityEngine;
 using System;
 
@@ -108,13 +105,13 @@ public class ManagerScript : MonoBehaviour
         for(int i=0; i<6; i++){
             GameObject u = Instantiate(UnitPrefab);
             UnitScript us = u.GetComponent<UnitScript>();
-            us.setup(3,"userTeam",10,i,0,0.35f,true);
+            us.setup(3,"userTeam",3,i,0,0.35f,true);
             my_units.Add(us);
 
 
             GameObject u2 = Instantiate(UnitPrefab);
             UnitScript us2 = u2.GetComponent<UnitScript>();
-            us2.setup(3,"userTeam",10,i,1,0.35f,true);
+            us2.setup(3,"userTeam",3,i,1,0.35f,true);
             my_units.Add(us2);
 
             units_on_board[i,0] = us;
@@ -126,13 +123,13 @@ public class ManagerScript : MonoBehaviour
         for(int i=0; i<6; i++){
             GameObject u = Instantiate(UnitPrefab);
             UnitScript us = u.GetComponent<UnitScript>();
-            us.setup(3,"userTeam",3,i,4,0.35f,false);
+            us.setup(3,"userTeam",2,i,4,0.35f,false);
             my_units.Add(us);
 
 
             GameObject u2 = Instantiate(UnitPrefab);
             UnitScript us2 = u2.GetComponent<UnitScript>();
-            us2.setup(3,"userTeam",3,i,5,0.35f,false);
+            us2.setup(3,"userTeam",2,i,5,0.35f,false);
             my_units.Add(us2);
 
             units_on_board[i,4] = us;

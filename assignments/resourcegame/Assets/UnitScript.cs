@@ -1,9 +1,7 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
-using UnityEditor.Il2Cpp;
+
 using UnityEngine;
+using TMPro;
 
 public class UnitScript : MonoBehaviour
 {
@@ -35,6 +33,12 @@ public class UnitScript : MonoBehaviour
 
     public bool friendly;
 
+    string level_txt;
+
+    public TMP_Text level_tmp;
+
+    bool level_revealed;
+
     
     void OnEnable(){
         ManagerScript.instance.unit_clicked += manager_says_unit_clicked;
@@ -60,8 +64,10 @@ public class UnitScript : MonoBehaviour
 
         if(friendly){
             deselectedColor = new Color(1f,0f,0f);
+            level_revealed = true;
         }else{
             deselectedColor = new Color(0f,0f,1f);
+            level_revealed = false;
         }
 
         rend.material.color = deselectedColor;
@@ -149,6 +155,14 @@ public class UnitScript : MonoBehaviour
             return;
         }
         
+        if(other.level == -1){
+            this.change_health(-1000);
+        }
+        if(this.level == -1){
+            other.change_health(-1000);
+        }
+
+
         if(this.level > other.level){
             other.change_health(-damage_amount);
             Debug.Log("you did damage");
@@ -156,6 +170,9 @@ public class UnitScript : MonoBehaviour
             this.change_health(-damage_amount);
             Debug.Log("you took damage");
         }
+
+        this.level_revealed = true;
+        other.level_revealed = true;
         
         
     }
@@ -165,9 +182,23 @@ public class UnitScript : MonoBehaviour
     {
         hbs = healthbar.GetComponent<HealthbarScript>();
         main_cam = GameObject.Find("Main Camera");
+
+
+        level_txt = this.level.ToString();
+        level_tmp.text = level_txt;
+
+
     }
 
     
+    string level_to_text(int level){
+        if(level == -1){
+            return "*";
+        }
+
+        return level.ToString();
+    }
+
     void Update()
     {
 
@@ -176,6 +207,13 @@ public class UnitScript : MonoBehaviour
         if(health <= 0){
             killMe();
         }
+
+        if(level_revealed){
+            level_tmp.text = level_to_text(level);
+        }else{
+            level_tmp.text = "";
+        }
+
     }
 
     
