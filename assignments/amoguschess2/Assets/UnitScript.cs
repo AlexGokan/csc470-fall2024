@@ -35,6 +35,8 @@ public class UnitScript : MonoBehaviour
 
     public ManagerScript game_manager_script;
 
+    GameObject main_camera;
+
 
 
     void Start()
@@ -53,6 +55,8 @@ public class UnitScript : MonoBehaviour
         unit_state_machine.set_state_abrupt(idling_State);
 
         game_manager_script = GameObject.Find("GameManager").GetComponent<ManagerScript>();
+
+        main_camera = GameObject.Find("Main Camera");
     }
 
     public void deselect_me(){
@@ -113,6 +117,8 @@ public class UnitScript : MonoBehaviour
                 rend.material.color = Color.white;
             }
         }
+
+        transform.LookAt(main_camera.transform.position);
     
     }
 
