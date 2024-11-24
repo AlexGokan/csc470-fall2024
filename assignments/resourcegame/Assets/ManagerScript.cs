@@ -91,10 +91,26 @@ public class ManagerScript : MonoBehaviour
     }
 
 
+    int[] shuffle_arr(int[] arr){
+        System.Random rng = new System.Random();
+        
+        int n = arr.Length;
+        while(n>1){
+            n--;
+            int k = rng.Next(n+1);
+            int val = arr[k];
+            arr[k] = arr[n];
+            arr[n] = val;
+        }
+
+        return arr;
+
+    }
+
     void Start()
     {
 
-        for(int i=0; i<6; i++){
+        for(int i=0; i<6; i++){//instantiate the board squares
             for(int j=0; j<6; j++){
                 GameObject sq = Instantiate(GridSquarePrefab);
                 board[i,j] = sq;
@@ -102,16 +118,21 @@ public class ManagerScript : MonoBehaviour
             }
         }
 
-        for(int i=0; i<6; i++){
+
+        int[] piece_strengths = {1,1,1,2,2,2,2,3,3,4,4,5};
+
+        piece_strengths = shuffle_arr(piece_strengths);
+
+        for(int i=0; i<6; i++){//friendly amogi
             GameObject u = Instantiate(UnitPrefab);
             UnitScript us = u.GetComponent<UnitScript>();
-            us.setup(3,"userTeam",3,i,0,0.35f,true);
+            us.setup(3,"userTeam",piece_strengths[2*i],i,0,0.35f,true);
             my_units.Add(us);
 
 
             GameObject u2 = Instantiate(UnitPrefab);
             UnitScript us2 = u2.GetComponent<UnitScript>();
-            us2.setup(3,"userTeam",3,i,1,0.35f,true);
+            us2.setup(3,"userTeam",piece_strengths[(2*i)+1],i,1,0.35f,true);
             my_units.Add(us2);
 
             units_on_board[i,0] = us;
@@ -120,16 +141,18 @@ public class ManagerScript : MonoBehaviour
 
         }
 
-        for(int i=0; i<6; i++){
+        piece_strengths = shuffle_arr(piece_strengths);
+
+        for(int i=0; i<6; i++){//enemy amogi
             GameObject u = Instantiate(UnitPrefab);
             UnitScript us = u.GetComponent<UnitScript>();
-            us.setup(3,"userTeam",2,i,4,0.35f,false);
+            us.setup(3,"userTeam",piece_strengths[2*i],i,4,0.35f,false);
             my_units.Add(us);
 
 
             GameObject u2 = Instantiate(UnitPrefab);
             UnitScript us2 = u2.GetComponent<UnitScript>();
-            us2.setup(3,"userTeam",2,i,5,0.35f,false);
+            us2.setup(3,"userTeam",piece_strengths[(2*i)+1],i,5,0.35f,false);
             my_units.Add(us2);
 
             units_on_board[i,4] = us;

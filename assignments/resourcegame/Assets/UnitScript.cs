@@ -84,7 +84,7 @@ public class UnitScript : MonoBehaviour
     }
     
     
-    bool valid_attack(int xf,int yf){
+    bool valid_attack(int xf,int yf){//need to make it use ray cast
         int xdiff = xcoord - xf;
         int ydiff = ycoord - yf;
 
