@@ -123,27 +123,19 @@ public class UnitScript : MonoBehaviour
     public bool move_to(int i, int j){
         Debug.Log("moving to"+i+" "+j);
         
-        if(valid_attack(i,j)){
+        if(valid_attack(i,j)){//if there is an ememy there, attack it
             attack(ManagerScript.instance.units_on_board[i,j], 1);
-            
-            Debug.Log("Valid attack");
             return true;
         }
 
-        if(valid_move(i,j)){
-            Debug.Log("Valid move");
+        if(valid_move(i,j)){//else, move to the empty square
             ManagerScript.instance.units_on_board[xcoord,ycoord] = null;
             xcoord = i; ycoord = j;
             transform.position = new Vector3(i,0,j);
             ManagerScript.instance.units_on_board[i,j] = this;
             return true;
         }
-        //if there is a teammate do nothing
-
-        //if there is an enemy attack it
-
-        //if there is nobody there then move
-        return false;
+        return false;//else do nothing
     }
 
     
@@ -155,21 +147,29 @@ public class UnitScript : MonoBehaviour
             return;
         }
         
-        if(other.level == -1){
-            this.change_health(-1000);
+        if(other.level == -1){//bombs will instakill anyone except level 1's
+            if(this.level == 1){
+                other.change_health(-1000);
+            }else{
+                this.change_health(-1000);
+            }
+
         }
         if(this.level == -1){
-            other.change_health(-1000);
+            if(other.level == 1){
+                this.change_health(-1000);
+            }else{
+                other.change_health(-1000);
+            }
         }
 
 
         if(this.level > other.level){
             other.change_health(-damage_amount);
-            Debug.Log("you did damage");
         }else{
             this.change_health(-damage_amount);
-            Debug.Log("you took damage");
         }
+
 
         this.level_revealed = true;
         other.level_revealed = true;
