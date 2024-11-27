@@ -20,16 +20,20 @@ I plan on keeping the interface pretty minimal. There will be "health bars" in t
 
 
 <--- Feature Set targets --->
+
  -->Minimum
+
 1. Control your indivisual cyclist
 2. A track racing mode over a set number of laps
 3. Animated cyclists (both yourself and AI opponents)
 
  -->Expected
+
  1. Crashing mechanic
  2. Extra animations based on available energy level
 
  -->Stretch Goals
+ 
  1. AI that does something non-trivial
  2. More interesting courses with elevation changes and multi-day races
  3. Controllable teammates
