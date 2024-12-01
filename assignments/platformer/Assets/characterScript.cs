@@ -98,6 +98,7 @@ public class characterScript : MonoBehaviour
         }
 
         
+        
         if(Input.GetKeyDown(KeyCode.Space) && (num_jumps > 0)){
             num_jumps--;
             speed_up = jump_speed;
