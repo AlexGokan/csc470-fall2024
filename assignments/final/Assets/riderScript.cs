@@ -35,8 +35,11 @@ public class riderScript : MonoBehaviour
 
     public float delta_v;
 
-    GameObject healthbar;
+    GameObject staminabar;
+    GameObject effortbar;
 
+    GameObject draftlight;
+    Renderer draftlight_rend;
 
     public float adjust_speed_for_curve(float speed, float rad){//when translating on y_distance, we will adjust based speed based on the radius of the curve
         return speed;
@@ -46,7 +49,10 @@ public class riderScript : MonoBehaviour
 
     void Start()
     {
-        healthbar = transform.Find("hb").gameObject;
+        staminabar = transform.Find("staminabar").gameObject;
+        effortbar = transform.Find("effortbar").gameObject;
+        draftlight = transform.Find("draftlight").gameObject;
+        draftlight_rend = draftlight.GetComponent<Renderer>();
     }
 
     IEnumerator pick_steering_angle_randomly(){
@@ -56,10 +62,19 @@ public class riderScript : MonoBehaviour
         }
     }
 
+    IEnumerator pick_effort_randomly(){
+        for(;;){
+            this.current_effort = Random.Range(0f,100f);
+            yield return new WaitForSeconds(1f);
+        }
+    }
+
     public void start_race(){
         this.speed = 0.1f;
         if(this.strategy == 0){
             StartCoroutine(pick_steering_angle_randomly());
+        }if(this.strategy == 2){
+            StartCoroutine(pick_effort_randomly());
         }
     }
 
@@ -92,6 +107,10 @@ public class riderScript : MonoBehaviour
     }
     
     void select_steering_ai(){
+        if(this.strategy == 2){
+            this.turn_rad = 0f;
+            return;
+        }
         if(this.strategy == 1){//straight on
             this.turn_rad = 0f;
             return;
@@ -121,8 +140,21 @@ public class riderScript : MonoBehaviour
 
     }
     
-    void upate_draft_multiplier(){
-        this.draft_factor = 1;//use a raycast etc to determine how much draft you get and to change this value
+    void update_draft_multiplier(){//could probably only check every .5 secs or something with a coroutine but idk if needed
+        LayerMask lm = LayerMask.GetMask("Riders");
+        RaycastHit hit;
+
+        float drafting_distance = 4.5f;
+        
+
+        if(Physics.Raycast(transform.position,transform.forward,out hit,drafting_distance,lm)){
+            this.draft_factor = 1f;
+            draftlight_rend.material.color = Color.blue;
+            
+        }else{
+            this.draft_factor = 0f;
+            draftlight_rend.material.color = Color.gray;
+        }
     }
     
     void select_effort_player(){
@@ -156,6 +188,8 @@ public class riderScript : MonoBehaviour
         }if(this.strategy == 1){//all-out
             this.current_effort = 100f;
             return;
+        }if(this.strategy == 2){
+            return;//handled by the pick random effort coroutine
         }
 
         this.current_effort = 30f;//fallback case
@@ -177,7 +211,8 @@ public class riderScript : MonoBehaviour
         this.cc.Move(this.speed * Vector3.forward * Time.deltaTime * 1f);
         this.cc.Move(this.turn_rad * Vector3.left * Time.deltaTime * 1.8f);
 
-        this.downtrack_pos += this.speed * Time.deltaTime;
+        //this.downtrack_pos += this.speed * Time.deltaTime;
+        this.downtrack_pos = transform.position.z;
         this.crosstrack_pos += this.turn_rad * Time.deltaTime * 1.8f;
     }
 
@@ -186,13 +221,20 @@ public class riderScript : MonoBehaviour
         //if effort is <= 40 recover slowly
         //otherwise drain energy
 
+        float energy_delta;
+
         if(this.current_effort <= e_quick){//recover energy quickly if very low effort
-            this.energy_remaining += Time.deltaTime * 4.5f;
+            energy_delta = Time.deltaTime * 18f;
+            energy_delta *= (1f+this.draft_factor);//recover energy faster in the draft
         }else if(this.current_effort <= e_slow){
-            this.energy_remaining += Time.deltaTime * 2f;
+            energy_delta = Time.deltaTime * 8f;
+            energy_delta *= (1f+this.draft_factor);
         }else{
-            this.energy_remaining -= Time.deltaTime * (this.current_effort - e_slow) * 1f;
+            energy_delta = -Time.deltaTime * (this.current_effort - e_slow) * 1f;
         }
+
+
+        this.energy_remaining += energy_delta;
 
         if(this.energy_remaining <= 0f){
             this.energy_remaining = 0f;
@@ -202,7 +244,9 @@ public class riderScript : MonoBehaviour
             this.energy_remaining = 100f;
         }
 
-        healthbar.GetComponent<healthbarScript>().set_health(energy_remaining,100f);
+
+        effortbar.GetComponent<healthbarScript>().set_health(this.current_effort,100f);
+        staminabar.GetComponent<healthbarScript>().set_health(this.energy_remaining,100f);
     }
 
     void apply_draft(){
@@ -212,7 +256,7 @@ public class riderScript : MonoBehaviour
     }
 
     public void controllable_update_step(){
-        upate_draft_multiplier();
+        update_draft_multiplier();
         spin_legs();
         select_steering_player();
         steer_rider();
@@ -224,7 +268,7 @@ public class riderScript : MonoBehaviour
     }
 
     public void ai_update_step(){
-        upate_draft_multiplier();
+        update_draft_multiplier();
         spin_legs();
         select_steering_ai();
         steer_rider();
