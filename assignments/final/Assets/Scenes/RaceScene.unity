@@ -181,9 +181,15 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects:
     - {fileID: 2339907862362205480, guid: 68c64c639be852f479bfc5dbb28b474b, type: 3}
+    - {fileID: 8160047575123199813, guid: 68c64c639be852f479bfc5dbb28b474b, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 68c64c639be852f479bfc5dbb28b474b, type: 3}
+--- !u!1 &564207073 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8160047575123199813, guid: 68c64c639be852f479bfc5dbb28b474b, type: 3}
+  m_PrefabInstance: {fileID: 6611050719925279166}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0
@@ -377,6 +383,7 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects:
     - {fileID: 2339907862362205480, guid: 68c64c639be852f479bfc5dbb28b474b, type: 3}
+    - {fileID: 8160047575123199813, guid: 68c64c639be852f479bfc5dbb28b474b, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 68c64c639be852f479bfc5dbb28b474b, type: 3}
@@ -439,6 +446,7 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects:
     - {fileID: 2339907862362205480, guid: 68c64c639be852f479bfc5dbb28b474b, type: 3}
+    - {fileID: 8160047575123199813, guid: 68c64c639be852f479bfc5dbb28b474b, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 68c64c639be852f479bfc5dbb28b474b, type: 3}
@@ -606,6 +614,7 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects:
     - {fileID: 2339907862362205480, guid: 68c64c639be852f479bfc5dbb28b474b, type: 3}
+    - {fileID: 8160047575123199813, guid: 68c64c639be852f479bfc5dbb28b474b, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 68c64c639be852f479bfc5dbb28b474b, type: 3}
@@ -642,6 +651,7 @@ MonoBehaviour:
   barrier_left: {fileID: 1967249294}
   barrier_right: {fileID: 2037643923}
   ai_riders_go: []
+  fadeout: {fileID: 564207073}
 --- !u!4 &1756289218
 Transform:
   m_ObjectHideFlags: 0
@@ -980,6 +990,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 130218196982714430, guid: 68c64c639be852f479bfc5dbb28b474b, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: b1d4dbdac562a8c41ba214a6fc59174e, type: 2}
     - target: {fileID: 950807663039225333, guid: 68c64c639be852f479bfc5dbb28b474b, type: 3}
       propertyPath: m_Enabled
       value: 1
@@ -1027,6 +1041,18 @@ PrefabInstance:
     - target: {fileID: 4704389379381790582, guid: 68c64c639be852f479bfc5dbb28b474b, type: 3}
       propertyPath: m_Name
       value: Rider
+      objectReference: {fileID: 0}
+    - target: {fileID: 8160047575123199813, guid: 68c64c639be852f479bfc5dbb28b474b, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 8160047575123199813, guid: 68c64c639be852f479bfc5dbb28b474b, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8160047575123199813, guid: 68c64c639be852f479bfc5dbb28b474b, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

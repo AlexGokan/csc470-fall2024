@@ -41,6 +41,10 @@ public class riderScript : MonoBehaviour
     GameObject draftlight;
     Renderer draftlight_rend;
 
+    public int index;
+
+    public Color jersey_color;
+
     public float adjust_speed_for_curve(float speed, float rad){//when translating on y_distance, we will adjust based speed based on the radius of the curve
         return speed;
     }
@@ -70,6 +74,10 @@ public class riderScript : MonoBehaviour
     }
 
     public void start_race(){
+
+        Renderer torso_rend = torso.GetComponent<Renderer>();
+        torso_rend.material.color = this.jersey_color;
+
         this.speed = 0.1f;
         if(this.strategy == 0){
             StartCoroutine(pick_steering_angle_randomly());

@@ -1,17 +1,12 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
+using UnityEditor;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
-
-
-/*
-
-The game manager will use coroutines to handle the large-scale structure of the race
-One coroutine will handle the race
-One coroutine will handle the podium
-
-
-*/
+using System.Linq;//needed to use the order by method
 
 
 
@@ -30,8 +25,37 @@ public class ManagerScript : MonoBehaviour
 
     List<riderScript> all_riders = new List<riderScript>();
 
+    
+    public GameObject fadeout;
+
+    IEnumerator fadeout_and_go_to_podium(){
+        Renderer fadeout_rend = fadeout.GetComponent<Renderer>();
+        Color c = fadeout_rend.material.color;
+
+        int timescale = 240;
+        for(int i=0; i<timescale; i++){
+            c.a = (float)i/(float)timescale;
+            fadeout_rend.material.color = c;
+            yield return null;
+        }
+
+        //put the first, second, and third place riders into player prefs
+        List<riderScript> riders_by_position = all_riders.OrderBy(o=>o.downtrack_pos).ToList();
+        
+        PlayerPrefs.SetInt("firstplace",riders_by_position[0].index);
+        PlayerPrefs.SetInt("secondplace",riders_by_position[1].index);
+        PlayerPrefs.SetInt("thirdplace",riders_by_position[2].index);
+
+
+        //now load new scene
+        SceneManager.LoadScene("PodiumScene");
+    }
+
     IEnumerator RaceMainLoop(){
         
+        Renderer fadeout_rend = fadeout.GetComponent<Renderer>();
+        fadeout_rend.material.color = new Color(0f,0f,0f,0f);
+
         for(int i=0; i<all_riders.Count; i++){
             all_riders[i].GetComponent<riderScript>().start_race();
         }
@@ -54,8 +78,8 @@ public class ManagerScript : MonoBehaviour
         }
 
         //we've finished the race
+        //StartCoroutine(fadeout_and_go_to_podium());
 
-        Debug.Log("race is finished");
     }
 
 
@@ -63,20 +87,26 @@ public class ManagerScript : MonoBehaviour
     void Start()
     {
         
+        List<Color> jersey_colors = new List<Color>{Color.red,Color.green,Color.blue,Color.cyan,Color.white,Color.magenta};
+        
         //get all ai characters and populate
         ai_riders_go = GameObject.FindGameObjectsWithTag("aiCharacter");
         
 
         player_rider_script = player_character.GetComponent<riderScript>();
         player_rider_script.strategy = -1;
+        player_rider_script.index = -1;
+        player_rider_script.jersey_color = Color.yellow;
+
 
         for(int i=0; i<ai_riders_go.Length; i++){
             ai_riders_go[i].GetComponent<riderScript>().strategy = i%3;
+            ai_riders_go[i].GetComponent<riderScript>().index = i;
+            ai_riders_go[i].GetComponent<riderScript>().jersey_color = jersey_colors[i];
             all_riders.Add(ai_riders_go[i].GetComponent<riderScript>());
         }
         all_riders.Add(player_rider_script);//create a list with every rider
         
-
 
 
         StartCoroutine(RaceMainLoop());
