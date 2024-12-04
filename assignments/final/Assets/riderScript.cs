@@ -2,6 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
+
+
 public class riderScript : MonoBehaviour
 {
     public float speed;//the riders speed
@@ -30,6 +33,10 @@ public class riderScript : MonoBehaviour
 
     public float speed_loss;
 
+    public float delta_v;
+
+    GameObject healthbar;
+
 
     public float adjust_speed_for_curve(float speed, float rad){//when translating on y_distance, we will adjust based speed based on the radius of the curve
         return speed;
@@ -39,13 +46,12 @@ public class riderScript : MonoBehaviour
 
     void Start()
     {
-        
+        healthbar = transform.Find("hb").gameObject;
     }
 
     IEnumerator pick_steering_angle_randomly(){
         for(;;){
             this.turn_rad = Random.Range(-4,4);
-            Debug.Log("turn!");
             yield return new WaitForSeconds(1f);
         }
     }
@@ -124,14 +130,17 @@ public class riderScript : MonoBehaviour
         float deceleration = 40f;
 
 
-        if(Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.S)){
+        if(Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.LeftShift)){
             if(Input.GetKey(KeyCode.W)){
                 this.current_effort = Mathf.Max(this.current_effort,0f);//set it to 0 if negative
                 this.current_effort += acceleration * Time.deltaTime;
             }if(Input.GetKey(KeyCode.S)){
                 this.current_effort = Mathf.Min(this.current_effort,0f);
                 this.current_effort -= deceleration * Time.deltaTime;
+            }if(Input.GetKey(KeyCode.LeftShift)){
+                this.current_effort = 100f;
             }
+
         }else{
             this.current_effort *= 0.75f;//decay towards 0
         }
@@ -155,9 +164,9 @@ public class riderScript : MonoBehaviour
     void move_rider_with_effort(){
 
         float effort_mult = 0.07f;
-        float delta_v = this.current_effort * effort_mult * Time.deltaTime;
+        this.delta_v = this.current_effort * effort_mult * Time.deltaTime;
 
-        this.speed += delta_v;
+        this.speed += this.delta_v;
 
     }
 
@@ -192,6 +201,8 @@ public class riderScript : MonoBehaviour
         if(this.energy_remaining >= 100f){
             this.energy_remaining = 100f;
         }
+
+        healthbar.GetComponent<healthbarScript>().set_health(energy_remaining,100f);
     }
 
     void apply_draft(){
@@ -207,8 +218,8 @@ public class riderScript : MonoBehaviour
         steer_rider();
         apply_draft();
         select_effort_player();
+        update_energy(20f,40f);//must be called before translate_rider and move_rider because we need to override effort if out of energy
         move_rider_with_effort();
-        update_energy(20f,40f);//must be called before translate_rider because we need to override effort if out of energy
         translate_rider();
     }
 
@@ -219,11 +230,12 @@ public class riderScript : MonoBehaviour
         steer_rider();
         apply_draft();
         select_effort_ai();
-        move_rider_with_effort();
         update_energy(20,40);
+        move_rider_with_effort();
         translate_rider();
     }
     
+
     void Update()
     {
         
