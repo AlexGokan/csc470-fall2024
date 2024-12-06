@@ -45,6 +45,8 @@ public class riderScript : MonoBehaviour
 
     public Color jersey_color;
 
+    public float turn_offset;
+
     public float adjust_speed_for_curve(float speed, float rad){//when translating on y_distance, we will adjust based speed based on the radius of the curve
         return speed;
     }
@@ -152,7 +154,7 @@ public class riderScript : MonoBehaviour
         LayerMask lm = LayerMask.GetMask("Riders");
         RaycastHit hit;
 
-        float drafting_distance = 4.5f;
+        float drafting_distance = 7f;
         
 
         if(Physics.Raycast(transform.position,transform.forward,out hit,drafting_distance,lm)){
@@ -217,11 +219,14 @@ public class riderScript : MonoBehaviour
         //this.transform.position += this.turn_rad * Vector3.left * Time.deltaTime * 1.8f;
 
         this.cc.Move(this.speed * Vector3.forward * Time.deltaTime * 1f);
-        this.cc.Move(this.turn_rad * Vector3.left * Time.deltaTime * 1.8f);
+        this.cc.Move((this.turn_rad + this.turn_offset) * Vector3.left * Time.deltaTime * this.speed * 1f);//
 
         //this.downtrack_pos += this.speed * Time.deltaTime;
         this.downtrack_pos = transform.position.z;
         this.crosstrack_pos += this.turn_rad * Time.deltaTime * 1.8f;
+
+
+        Vector3 turn = this.turn_offset * Time.deltaTime * this.speed * 10f * Vector3.left;
     }
 
     void update_energy(float e_quick, float e_slow){
@@ -261,6 +266,23 @@ public class riderScript : MonoBehaviour
         this.speed_loss = Mathf.Pow(this.speed*0.1f,3f) * 0.001f;
 
         this.speed *= 1f-this.speed_loss;
+    }
+
+
+    void OnTriggerEnter(Collider c){
+        if(c.gameObject.tag.Equals("0_turn")){
+            this.turn_offset = 2.5f;
+            return;
+        }
+
+
+        if(c.gameObject.tag.Equals("1_turn")){
+            this.turn_offset = 1f;
+            return;
+        }
+    }
+    void OnTriggerExit(Collider c){
+        this.turn_offset = 0f;
     }
 
     public void controllable_update_step(){

@@ -5,6 +5,7 @@ TagManager:
   serializedVersion: 2
   tags:
   - aiCharacter
+  - 0_turn
   layers:
   - Default
   - TransparentFX
