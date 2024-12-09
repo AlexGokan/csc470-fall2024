@@ -17,7 +17,7 @@ public class FanScript : MonoBehaviour
             Vector3 offset = Vector3.up * Mathf.Sin(time_scale*Time.time + time_offset) * amp;
             offset.y += amp/2f;
 
-            Debug.Log(offset.y);
+            //Debug.Log(offset.y);
 
             transform.position = home_base + offset;
             yield return null;

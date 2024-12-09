@@ -64,15 +64,15 @@ public class RiderScript : MonoBehaviour
     }
 
     
-    // Start is called before the first frame update
+
     void Start()
     {
-
-        //lap_counter.text = "Laps: 0/" + race_manager.num_laps;
 
         cam_home_position = main_cam.transform.localPosition;
         
         race_manager = race_manager_go.GetComponent<RaceManagerScript>();
+
+        //TODO: WHY CAN I NOT SET THE TMP_TEXT AT THE START OF THE GAME???????
 
 
         if(!is_ai){
@@ -82,7 +82,7 @@ public class RiderScript : MonoBehaviour
         }else{
             StartCoroutine(pick_random_steer());
         }
-        //transform.position = new Vector3(60f,1.5f,20f);
+
     }
 
     float draft_multiplier(){
@@ -98,7 +98,7 @@ public class RiderScript : MonoBehaviour
             is_drafting = true;
 
             GameObject g = hit.collider.gameObject;
-            //g.GetComponent<RiderScript>().is_being_drafted = true;
+            //g.GetComponent<RiderScript>().is_being_drafted = true;//this line causes WEIRD effects - don't uncomment
 
             return 1.25f;
         }else{
@@ -114,9 +114,22 @@ public class RiderScript : MonoBehaviour
         
         if(this.course_state == 0){
             Vector3 to_move = this.speed * draft_multiplier() * Time.deltaTime * transform.forward;
-            cc.Move(to_move);//TODO: always snap the riders facing to N/S in case it somehow bugs out in a turn
+            cc.Move(to_move);
 
-            //transform.position += this.speed * Time.deltaTime * transform.forward;
+            Vector3 north = Vector3.forward;
+            Vector3 south = -1f * Vector3.forward;
+            float dn = Vector3.Dot(north,transform.forward);
+            float ds = Vector3.Dot(south,transform.forward);
+
+
+            float traveling_angle = Vector3.SignedAngle(north,transform.forward,Vector3.up);
+            if(Mathf.Abs(traveling_angle - 0f) < 15f){//lock the facing direction to north/south in case high speeds cause floating point error to make him a bit off angle
+                transform.Rotate(Vector3.up,-traveling_angle);
+            }
+            if(Mathf.Abs(traveling_angle - 180f) < 15f){
+                transform.Rotate(Vector3.up,180-traveling_angle);
+            }
+            
             return;
         }
 
@@ -172,7 +185,7 @@ public class RiderScript : MonoBehaviour
         }
     }
     
-    void turn_left(float side_move_speed, float speed_loss){//TODO: need to protect this with a raycast to the left
+    void turn_left(float side_move_speed, float speed_loss){
         
         Vector3 to_move = this.speed * Time.deltaTime * transform.right * -1f * side_move_speed;
         to_move += Vector3.up * 0.12f * -1f * Time.deltaTime * this.speed;
@@ -205,8 +218,6 @@ public class RiderScript : MonoBehaviour
             this.speed *= 1f - (speed_loss * Time.deltaTime); 
             return;
         }
-
-
         
     }
 
@@ -311,7 +322,6 @@ public class RiderScript : MonoBehaviour
     }
 
     void update_particles(){
-        //ParticleSystem ps = this.gameObject.GetComponent<ParticleSystem>();
         ParticleSystem ps = GetComponentInChildren<ParticleSystem>();        
         ParticleSystem.EmissionModule em =  ps.emission;
         if(this.is_drafting){
@@ -353,8 +363,9 @@ public class RiderScript : MonoBehaviour
 
         if(g.CompareTag("FinishLine")){
             this.laps++;
-            //lap_counter.text = "Laps: " + this.laps + "/" + race_manager.num_laps;
-
+            if(!is_ai){
+                lap_counter.text = "Laps: " + this.laps + "/" + race_manager.num_laps;
+            }
 
             return;
         }
