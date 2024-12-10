@@ -10,10 +10,13 @@ public class FanScript : MonoBehaviour
 
     float time_offset;
 
+    float time_scale;
+
+    
     IEnumerator jump_up_and_down(){
         for(;;){
             float amp = (race_manager.cheer_amount + 0.2f) * 2;
-            float time_scale = 4f * (1 + 2*race_manager.cheer_amount);
+            time_scale = 4f * (1 + 2*race_manager.cheer_amount);
             Vector3 offset = Vector3.up * Mathf.Sin(time_scale*Time.time + time_offset) * amp;
             offset.y += amp/2f;
 

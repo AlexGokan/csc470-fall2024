@@ -44,6 +44,9 @@ public class RiderScript : MonoBehaviour
 
     public TMP_Text lap_counter;
 
+    public GameObject front_wheel;
+    public GameObject rear_wheel;
+
 
     public Vector3 RotatePointAroundPivot(Vector3 point, Vector3 pivot, Vector3 angles) {//https://discussions.unity.com/t/rotate-a-vector-around-a-certain-point/81225/3
         return Quaternion.Euler(angles) * (point - pivot) + pivot;
@@ -59,7 +62,7 @@ public class RiderScript : MonoBehaviour
             }else{
                 this.ai_steer_direction = 0;
             }
-            yield return new WaitForSeconds(100000000000f);
+            yield return new WaitForSeconds(1.5f);
         }
     }
 
@@ -68,18 +71,24 @@ public class RiderScript : MonoBehaviour
     void Start()
     {
 
-        cam_home_position = main_cam.transform.localPosition;
+        Debug.Log("starting");
         
+        if(!is_ai){
+            cam_home_position = main_cam.transform.localPosition;
+        }
+
         race_manager = race_manager_go.GetComponent<RaceManagerScript>();
 
         //TODO: WHY CAN I NOT SET THE TMP_TEXT AT THE START OF THE GAME???????
 
 
         if(!is_ai){
+            Debug.Log("am NOT ai");
             this.top_pedaling_speed = 34f + PlayerPrefs.GetInt("rider_speed");
             this.delta_speed = 3.1f + PlayerPrefs.GetInt("rider_speed") * 0.1f;
             StartCoroutine(get_new_camera_jitter());
         }else{
+            Debug.Log("am an ai");
             StartCoroutine(pick_random_steer());
         }
 
@@ -114,6 +123,9 @@ public class RiderScript : MonoBehaviour
         
         if(this.course_state == 0){
             Vector3 to_move = this.speed * draft_multiplier() * Time.deltaTime * transform.forward;
+            float delta_y = transform.position.y - 0.54f;
+            to_move += Vector3.up * delta_y * -1f;
+            
             cc.Move(to_move);
 
             Vector3 north = Vector3.forward;
@@ -123,13 +135,14 @@ public class RiderScript : MonoBehaviour
 
 
             float traveling_angle = Vector3.SignedAngle(north,transform.forward,Vector3.up);
-            if(Mathf.Abs(traveling_angle - 0f) < 15f){//lock the facing direction to north/south in case high speeds cause floating point error to make him a bit off angle
+            if(Mathf.Abs(traveling_angle - 0f) < 60f){//lock the facing direction to north/south in case high speeds cause floating point error to make him a bit off angle
                 transform.Rotate(Vector3.up,-traveling_angle);
             }
-            if(Mathf.Abs(traveling_angle - 180f) < 15f){
+            if(Mathf.Abs(traveling_angle - 180f) < 60f){
                 transform.Rotate(Vector3.up,180-traveling_angle);
             }
-            
+
+
             return;
         }
 
@@ -147,7 +160,10 @@ public class RiderScript : MonoBehaviour
             float amount_to_rotate = Time.deltaTime * omega_d * -1f;
 
             Vector3 new_pos = RotatePointAroundPivot(transform.position,t1_rot_center.transform.position,new Vector3(0f,amount_to_rotate,0f));
-            cc.Move(new_pos - transform.position);
+            Vector3 to_move = new_pos - transform.position;
+            float delta_y = transform.position.y - 0.54f;
+            to_move += Vector3.up * delta_y * -1f;
+            cc.Move(to_move);
 
             this.transform.Rotate(Vector3.up,amount_to_rotate);
             return;
@@ -161,7 +177,10 @@ public class RiderScript : MonoBehaviour
             float amount_to_rotate = Time.deltaTime * omega_d * -1f;
 
             Vector3 new_pos = RotatePointAroundPivot(transform.position,t2_rot_center.transform.position,new Vector3(0f,amount_to_rotate,0f));
-            cc.Move(new_pos - transform.position);
+            Vector3 to_move = new_pos - transform.position;
+            float delta_y = transform.position.y - 0.54f;
+            to_move += Vector3.up * delta_y * -1f;
+            cc.Move(to_move);
 
             this.transform.Rotate(Vector3.up,amount_to_rotate);
             return;
@@ -188,36 +207,35 @@ public class RiderScript : MonoBehaviour
     void turn_left(float side_move_speed, float speed_loss){
         
         Vector3 to_move = this.speed * Time.deltaTime * transform.right * -1f * side_move_speed;
-        to_move += Vector3.up * 0.12f * -1f * Time.deltaTime * this.speed;
-        cc.Move(to_move); 
+        
 
         RaycastHit hit;
         LayerMask lm = LayerMask.GetMask("Sidewall");
-
-        if(Physics.Raycast(transform.position,-1*transform.right,out hit, 1f,lm)){
-            return;
+        float wall_check_distance = 2f;
+        if(Physics.Raycast(transform.position,-1*transform.right,out hit,wall_check_distance,lm)){
+            
         }else{
-            this.speed /= 1f - (speed_loss * Time.deltaTime);
-            return;
+            //this.speed /= 1f - (speed_loss * Time.deltaTime);
+            //to_move += Vector3.up * 0.12f * -1f * Time.deltaTime * this.speed;//this shit will not stop bugging so I'm REMOVING IT    
         }
+        cc.Move(to_move); 
         
     }
 
     void turn_right(float side_move_speed, float speed_loss){
-        Vector3 to_move = this.speed * Time.deltaTime * transform.right * side_move_speed;
-        to_move += Vector3.up * 0.12f * 1f * Time.deltaTime * this.speed;
-        cc.Move(to_move); 
+        Vector3 to_move = this.speed * Time.deltaTime * transform.right * side_move_speed;       
 
 
         RaycastHit hit;
         LayerMask lm = LayerMask.GetMask("Sidewall");
+        float wall_check_distance = 2f;
+        if(Physics.Raycast(transform.position,transform.right,out hit,wall_check_distance,lm)){
 
-        if(Physics.Raycast(transform.position,transform.right,out hit, 1f,lm)){
-            return;
         }else{
-            this.speed *= 1f - (speed_loss * Time.deltaTime); 
-            return;
+            //to_move += Vector3.up * 0.12f * 1f * Time.deltaTime * this.speed;
+            //this.speed *= 1f - (speed_loss * Time.deltaTime);
         }
+        cc.Move(to_move);
         
     }
 
@@ -244,8 +262,6 @@ public class RiderScript : MonoBehaviour
         if we are in a curve (track_state == 1 or 2) we need to make sure the smaller center distance never gets bigger than the track width
         */
         
-        
-        //TODO - snap rider to ground
         
         int steer = 0;
         if(is_ai){
@@ -282,6 +298,7 @@ public class RiderScript : MonoBehaviour
             }
 
         }
+        
         
 
         /*
