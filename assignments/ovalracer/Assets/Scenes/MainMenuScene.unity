@@ -563,11 +563,12 @@ MonoBehaviour:
 
 
     You
-    can draft behind your opponents to gain speed and recover energy
+    can draft behind your opponents to gain speed and recover energy - you''ll see
+    particles if you''re close enough to be drafting!
 
 
-    First
-    rider to complete 10 laps wins!'
+    First rider to complete
+    5 laps wins!'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
