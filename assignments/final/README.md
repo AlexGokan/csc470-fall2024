@@ -1,3 +1,7 @@
+THIS IS NOT THE REPO WITH THE FINAL SOURCE CODE
+
+Navigate to the repo "ovalracer" to see the source code
+
 Design Doc: Bicycle Racing Simulator
 
 <--- Gameplay --->
