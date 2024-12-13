@@ -27,6 +27,7 @@ public class RiderScript : MonoBehaviour
     public float top_pedaling_speed = 40f;
 
     public int ai_steer_direction;
+    public int ai_throttle;
 
     public GameObject race_manager_go;
 
@@ -50,6 +51,21 @@ public class RiderScript : MonoBehaviour
 
     public Vector3 RotatePointAroundPivot(Vector3 point, Vector3 pivot, Vector3 angles) {//https://discussions.unity.com/t/rotate-a-vector-around-a-certain-point/81225/3
         return Quaternion.Euler(angles) * (point - pivot) + pivot;
+    }
+
+    IEnumerator pick_random_throttle(){
+        for(;;){
+            float r = UnityEngine.Random.Range(0f,1f);
+            if(r > 0.25f){
+                this.ai_throttle = 1;
+            }else if(r > 0.125){
+                this.ai_throttle = 0;
+            }else{
+                this.ai_throttle = -1;
+            }
+
+            yield return new WaitForSeconds(1.5f);
+        }
     }
 
     IEnumerator pick_random_steer(){
@@ -188,20 +204,29 @@ public class RiderScript : MonoBehaviour
     }
 
     void speed_update(){
-        if(!is_ai){
-            if(Input.GetKey(KeyCode.W)){
-                if(this.speed <= top_pedaling_speed){
-                    this.speed += Time.deltaTime * delta_speed;
-                }
-            }
-
-            if(Input.GetKey(KeyCode.S)){
-                this.speed -= Time.deltaTime * delta_speed;
-                this.speed = Mathf.Max(this.speed,0f);
-            }
+        int throttle;
+        if(is_ai){
+            throttle = get_ai_throttle();
         }else{
-            return;//maintain speed
+            throttle = get_user_throttle();
         }
+        
+        
+        if(throttle == 1){
+            if(this.speed <= top_pedaling_speed){
+                    this.speed += Time.deltaTime * delta_speed;
+            }
+            return;
+        }
+        
+        if(throttle == -1){
+            this.speed -= Time.deltaTime * delta_speed;
+            this.speed = Mathf.Max(this.speed,0f);
+            return;
+        }
+
+
+        //if throttle == 0 do nothing
     }
     
     void turn_left(float side_move_speed, float speed_loss){
@@ -250,9 +275,27 @@ public class RiderScript : MonoBehaviour
         return 0;
     }
 
+    int get_user_throttle(){
+        if(Input.GetKey(KeyCode.W)){
+            return 1;
+        }
+
+        if(Input.GetKey(KeyCode.S)){
+            return -1;
+        }
+
+        return 0;
+    }
+
     int get_ai_steer(){
         return this.ai_steer_direction;
     }
+
+    int get_ai_throttle(){
+        return this.ai_throttle;
+    }
+
+
 
 
     void controlled_move(){
@@ -334,18 +377,23 @@ public class RiderScript : MonoBehaviour
     
     void update_camera(){
         if(!is_ai){
-            main_cam.transform.localPosition = cam_home_position + camera_shake_vector;
+            if(Input.GetKey(KeyCode.LeftShift)){
+                main_cam.transform.localPosition = cam_home_position + 4f*transform.forward + -0.5f*transform.up;//this doesn't work idk
+                main_cam.transform.localRotation = Quaternion.Euler(0,180,0);
+            }else{
+                main_cam.transform.localPosition = cam_home_position + camera_shake_vector;//only camera shake when looking forward
+                main_cam.transform.localRotation = Quaternion.Euler(0,0,0);
+            }
+            
         }
     }
 
     void update_particles(){
         ParticleSystem ps = GetComponentInChildren<ParticleSystem>();        
         ParticleSystem.EmissionModule em =  ps.emission;
-        if(this.is_drafting){
-            em.enabled = true;
-        }else{
-            em.enabled = false;
-        }
+        
+        em.enabled = this.is_drafting;
+
     }
    
     void Update()
